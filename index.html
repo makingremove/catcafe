@@ -13,7 +13,6 @@
             --btn-color: #252545;
             --success: #6ab04c;
             --danger: #eb4d4b;
-            --lofi-purple: #4834d4;
         }
 
         * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -23,48 +22,56 @@
             background-color: #050505;
             color: var(--text-main);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 100vh; overflow: hidden;
+            height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            overflow: hidden;
             display: flex; justify-content: center; align-items: center;
         }
 
         #game-container {
             position: relative;
-            width: 100%; max-width: 500px;
-            height: 100vh;
+            width: 100%; 
+            max-width: 500px;
+            height: 100%;
             background-color: var(--bg-dark);
-            display: flex; flex-direction: column;
+            display: flex; 
+            flex-direction: column;
             box-shadow: 0 0 100px rgba(0,0,0,1);
         }
 
-        /* --- AREA ATAS: VIEW CAFE LOFI --- */
+        /* --- HUD --- */
+        #hud {
+            height: 50px;
+            padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: #08080f;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+        .stat { font-family: monospace; font-size: 0.9rem; }
+        .stat span { color: var(--accent-warm); font-weight: bold; }
+
+        /* --- AREA ATAS: VIEW CAFE (RESPONSIVE) --- */
         #cafe-view {
-            flex: 1.2;
+            flex: 1; /* Mengambil sisa ruang yang ada */
             position: relative;
             background: linear-gradient(to bottom, #0f0f1b, #2c1a32);
             overflow: hidden;
             border-bottom: 3px solid #222;
         }
 
-        /* Visual Jendela */
         .window-frame {
             position: absolute;
-            top: 20px; left: 50%;
+            top: 5%; left: 50%;
             transform: translateX(-50%);
-            width: 80%; height: 120px;
+            width: 85%; height: 25%;
             background: rgba(255, 255, 255, 0.03);
             border: 4px solid #1a1a2a;
             border-radius: 10px;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
             z-index: 1;
         }
-        .window-pane {
-            position: absolute;
-            top: 0; left: 50%;
-            width: 2px; height: 100%;
-            background: #1a1a2a;
-        }
+        .window-pane { position: absolute; top: 0; left: 50%; width: 2px; height: 100%; background: #1a1a2a; }
 
-        /* Dekorasi Interior Lofi */
         .lofi-bg-decor {
             position: absolute; width: 100%; height: 100%;
             background-image: 
@@ -73,36 +80,25 @@
             pointer-events: none;
         }
 
-        .hanging-lamp {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 2px; height: 30px; background: #444; z-index: 2;
-        }
-        .hanging-lamp::after {
-            content: ''; position: absolute; bottom: -12px; left: -12px;
-            width: 24px; height: 16px; background: var(--accent-warm);
-            border-radius: 50% 50% 0 0; box-shadow: 0 5px 20px var(--accent-warm);
-            opacity: 0.6;
-        }
-
         canvas#rain-canvas { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             opacity: 0.4; pointer-events: none; z-index: 2;
         }
 
-        /* AREA PELANGGAN (DUDUK DI KURSI) */
+        /* AREA KURSI */
         #customer-area {
             position: absolute;
-            bottom: 20px;
+            bottom: 10px;
             width: 100%;
-            height: 140px;
+            height: 40%;
             display: flex;
             justify-content: space-around;
-            padding: 0 20px;
+            padding: 0 10px;
             z-index: 10;
         }
 
         .chair-slot {
-            width: 80px;
+            width: 30%;
             height: 100%;
             position: relative;
             display: flex;
@@ -111,18 +107,14 @@
             align-items: center;
         }
         .chair-slot::before {
-            content: '🪑'; position: absolute; bottom: 0; font-size: 2.2rem; opacity: 0.3;
+            content: '🪑'; position: absolute; bottom: 0; font-size: 2rem; opacity: 0.3;
         }
 
         .customer-slot {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            opacity: 0;
-            transform: translateY(-20px);
+            display: flex; flex-direction: column; align-items: center;
+            opacity: 0; transform: translateY(-20px);
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .customer-slot.active { opacity: 1; transform: translateY(0); }
@@ -130,127 +122,80 @@
         .order-cloud {
             background: rgba(255,255,255,0.95);
             color: #222;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 1rem;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: bold;
             margin-bottom: 5px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             animation: bounce 2s infinite ease-in-out;
         }
 
-        .customer-avatar { 
-            font-size: 3.2rem; 
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
-        }
+        .customer-avatar { font-size: 3rem; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); }
 
-        .patience-bar {
-            width: 50px; height: 4px; background: #333; border-radius: 10px; margin-top: 5px; overflow: hidden;
-        }
+        .patience-bar { width: 40px; height: 4px; background: #333; border-radius: 5px; margin-top: 5px; overflow: hidden; }
         .patience-fill { width: 100%; height: 100%; background: var(--success); transition: width 0.1s linear; }
 
-        /* --- KUCING FREE ROAMING --- */
-        .cat-roamer {
-            position: absolute;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: left 4s linear, top 4s linear, transform 0.4s;
-            z-index: 5;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-        }
-
-        /* --- AREA KERJA --- */
+        /* --- KITCHEN AREA (STAY AT BOTTOM) --- */
         #kitchen-station {
             background: #151525;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            padding: 12px;
             gap: 10px;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Jangan biarkan area ini mengecil */
+            z-index: 30;
         }
 
-        .station-label { font-size: 0.6rem; color: #777; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
-
         #assembly-line {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            align-items: center;
-            background: #0d0d1a;
-            padding: 10px;
-            border-radius: 15px;
+            display: flex; gap: 10px; justify-content: center; align-items: center;
+            background: #0d0d1a; padding: 10px; border-radius: 12px;
             border: 2px solid #2a2a4a;
         }
 
         .prep-slot {
-            width: 55px; height: 55px;
-            background: #080812;
-            border: 2px dashed #3a3a5a;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem;
+            width: 50px; height: 50px;
+            background: #080812; border: 2px dashed #3a3a5a; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
         }
-        .prep-slot.filled { border-style: solid; border-color: var(--accent-warm); background: #1a1a2e; box-shadow: 0 0 10px rgba(255,203,142,0.1); }
+        .prep-slot.filled { border-style: solid; border-color: var(--accent-warm); background: #1a1a2e; }
 
         #ingredient-shelf {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
         }
 
         .ing-btn {
-            background: var(--btn-color);
-            border: 1px solid #333;
-            border-radius: 10px;
-            padding: 8px 4px;
-            color: white;
-            cursor: pointer;
+            background: var(--btn-color); border: 1px solid #333; border-radius: 8px;
+            padding: 8px 2px; color: white; cursor: pointer;
             display: flex; flex-direction: column; align-items: center;
         }
-        .ing-btn:active { transform: scale(0.9); }
-        .ing-btn span { font-size: 1.2rem; }
-        .ing-btn small { font-size: 0.55rem; opacity: 0.7; font-weight: bold; }
+        .ing-btn span { font-size: 1.1rem; }
+        .ing-btn small { font-size: 0.5rem; opacity: 0.7; font-weight: bold; }
 
         #serve-action {
             background: linear-gradient(135deg, #6ab04c, #4a903c);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
+            color: white; border: none; padding: 12px; border-radius: 10px;
+            font-weight: bold; font-size: 0.9rem; cursor: pointer; width: 100%;
         }
 
-        /* --- HUD --- */
-        #hud {
-            padding: 8px 20px;
-            display: flex; justify-content: space-between;
-            background: #08080f;
-        }
-        .stat { font-family: monospace; font-size: 0.9rem; }
-        .stat span { color: var(--accent-warm); }
-
+        /* --- OVERLAY --- */
         #overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(13, 13, 21, 0.98); z-index: 100;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
 
-        .start-btn {
-            background: var(--accent-warm); color: #2c1a32;
-            padding: 15px 40px; border-radius: 40px; font-weight: bold;
-            border: none; cursor: pointer; margin-top: 20px; font-size: 1.1rem;
-        }
-
-        .floating-text {
-            position: absolute;
-            font-weight: bold; font-size: 1.1rem;
-            pointer-events: none; animation: floatUp 1s forwards; z-index: 100;
+        /* RESPONSIVE ADJUSTMENTS */
+        @media (max-width: 400px) {
+            .customer-avatar { font-size: 2.5rem; }
+            .prep-slot { width: 45px; height: 45px; }
+            .ing-btn span { font-size: 1rem; }
+            .order-cloud { font-size: 0.8rem; }
         }
 
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .cat-roamer { position: absolute; font-size: 1.8rem; cursor: pointer; transition: all 4s linear; z-index: 5; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+        .floating-text { position: absolute; font-weight: bold; font-size: 1rem; pointer-events: none; animation: floatUp 1s forwards; z-index: 100; }
         @keyframes floatUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-60px); opacity: 0; } }
     </style>
 </head>
@@ -265,8 +210,6 @@
     <div id="cafe-view">
         <div class="lofi-bg-decor"></div>
         <div class="window-frame"><div class="window-pane"></div></div>
-        <div class="hanging-lamp" style="left: 30%;"></div>
-        <div class="hanging-lamp" style="left: 70%;"></div>
         
         <canvas id="rain-canvas"></canvas>
         
@@ -280,10 +223,9 @@
     </div>
 
     <div id="kitchen-station">
-        <div class="station-label">Papan Peracikan</div>
         <div id="assembly-line">
             <div class="prep-slot" id="prep-base"></div>
-            <div style="font-size: 1rem; color: #444;">+</div>
+            <div style="color: #444;">+</div>
             <div class="prep-slot" id="prep-topping"></div>
         </div>
 
@@ -294,165 +236,71 @@
             <button class="ing-btn" onclick="addIngredient('topping', '🍬', 'Gula')"><span>🍬</span><small>GULA</small></button>
         </div>
 
-        <button id="serve-action" onclick="tryServe()">SAJIKAN PESANAN</button>
+        <button id="serve-action" onclick="tryServe()">SAJIKAN</button>
     </div>
 
     <div id="overlay">
-        <h1 style="color: var(--accent-warm); margin-bottom: 0; letter-spacing: 2px;">2AM CAT CAFÉ</h1>
-        <p style="padding: 0 40px; font-size: 0.9rem; line-height: 1.6; opacity: 0.8;">
-            Hujan deras di luar.<br>Layan pelanggan yang ingin bersantai.<br>Klik kucing untuk tip bonus.
-        </p>
-        <button class="start-btn" onclick="startGame()">Buka Kafe</button>
+        <h2 style="color: var(--accent-warm); letter-spacing: 2px;">2AM CAT CAFÉ</h2>
+        <p style="padding: 0 40px; font-size: 0.85rem; opacity: 0.8;">Layan pelanggan yang datang.<br>Klik kucing untuk tip bonus.</p>
+        <button style="background: var(--accent-warm); border:none; padding: 12px 30px; border-radius: 20px; font-weight:bold; cursor:pointer;" onclick="startGame()">Buka Kafe</button>
     </div>
 </div>
 
 <script>
     let audioCtx;
     const gameState = {
-        money: 0,
-        score: 0,
-        isPlaying: false,
+        money: 0, score: 0, isPlaying: false,
         prep: { base: null, topping: null },
         slots: [null, null, null],
-        recipeBook: {
-            "☕🥛": { price: 30 }, "☕🍬": { price: 20 },
-            "🍵🥛": { price: 25 }, "🍵🍬": { price: 15 }
-        }
+        recipeBook: { "☕🥛": 30, "☕🍬": 20, "🍵🥛": 25, "🍵🍬": 15 }
     };
 
-    const customerEmojis = ["👩‍🎓", "👨‍🎨", "👨‍🍳", "👩‍💼", "🤵"];
-    const catEmojis = ["🐈‍⬛", "🐈", "🐅", "🤍"];
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
-    function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-    }
-
-    // Simulasi Suara Hujan Lofi
     function startRainSound() {
         if (!audioCtx) return;
-        const bufferSize = 2 * audioCtx.sampleRate,
-        noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate),
-        output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            output[i] = Math.random() * 2 - 1;
-        }
-
-        const whiteNoise = audioCtx.createBufferSource();
-        whiteNoise.buffer = noiseBuffer;
-        whiteNoise.loop = true;
-
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 1000;
-
-        const gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0.02; // Suara hujan sayup-sayup
-
-        whiteNoise.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        const bufferSize = 2 * audioCtx.sampleRate, noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate), output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+        const whiteNoise = audioCtx.createBufferSource(); whiteNoise.buffer = noiseBuffer; whiteNoise.loop = true;
+        const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 1000;
+        const gainNode = audioCtx.createGain(); gainNode.gain.value = 0.02;
+        whiteNoise.connect(filter); filter.connect(gainNode); gainNode.connect(audioCtx.destination);
         whiteNoise.start();
     }
 
     function playSound(f, d = 0.1) {
         if (!audioCtx) return;
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.frequency.value = f; g.gain.value = 0.03;
-        o.connect(g); g.connect(audioCtx.destination);
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        o.frequency.value = f; g.gain.value = 0.03; o.connect(g); g.connect(audioCtx.destination);
         o.start(); o.stop(audioCtx.currentTime + d);
     }
 
     function startGame() {
-        initAudio();
-        startRainSound();
+        initAudio(); startRainSound();
         document.getElementById('overlay').style.display = 'none';
         gameState.isPlaying = true;
-        initRain();
-        spawnCat(); spawnCat(); 
-        customerLoop();
+        initRain(); spawnCat(); spawnCat(); customerLoop();
     }
 
-    function addIngredient(type, emoji, label) {
+    function addIngredient(type, emoji) {
         if (!gameState.isPlaying) return;
         gameState.prep[type] = emoji;
         const slot = document.getElementById(`prep-${type}`);
-        slot.innerHTML = emoji;
-        slot.classList.add('filled');
+        slot.innerHTML = emoji; slot.classList.add('filled');
         playSound(300 + (type === 'topping' ? 100 : 0));
     }
 
-    function clearAssembly() {
-        gameState.prep = { base: null, topping: null };
-        document.querySelectorAll('.prep-slot').forEach(s => {
-            s.innerHTML = ''; s.classList.remove('filled');
-        });
-    }
-
-    function spawnCustomer() {
-        const emptySlotIdx = gameState.slots.findIndex(s => s === null);
-        if (emptySlotIdx === -1) return;
-
-        const keys = Object.keys(gameState.recipeBook);
-        const randomRecipe = keys[Math.floor(Math.random() * keys.length)];
-        const avatar = customerEmojis[Math.floor(Math.random() * customerEmojis.length)];
-
-        const customer = { recipe: randomRecipe, patience: 100 };
-        gameState.slots[emptySlotIdx] = customer;
-
-        const slotEl = document.getElementById(`slot-${emptySlotIdx}`);
-        slotEl.innerHTML = `
-            <div class="order-cloud">${randomRecipe}</div>
-            <div class="customer-avatar">${avatar}</div>
-            <div class="patience-bar"><div class="patience-fill" id="p-fill-${emptySlotIdx}"></div></div>
-        `;
-        slotEl.classList.add('active');
-
-        customer.interval = setInterval(() => {
-            customer.patience -= 0.35;
-            const fill = document.getElementById(`p-fill-${emptySlotIdx}`);
-            if (fill) {
-                fill.style.width = customer.patience + "%";
-                if (customer.patience < 30) fill.style.background = "var(--danger)";
-            }
-            if (customer.patience <= 0) removeCustomer(emptySlotIdx, false);
-        }, 100);
-    }
-
-    function removeCustomer(idx, success) {
-        const customer = gameState.slots[idx];
-        if (!customer) return;
-        clearInterval(customer.interval);
-        const slotEl = document.getElementById(`slot-${idx}`);
-        slotEl.classList.remove('active');
-        
-        setTimeout(() => {
-            slotEl.innerHTML = '';
-            gameState.slots[idx] = null;
-        }, 600);
-
-        if (!success) {
-            playSound(150, 0.2);
-            showFloatText("Sabar Habis", slotEl, "var(--danger)");
-            gameState.money = Math.max(0, gameState.money - 5);
-            updateHUD();
-        }
-    }
-
     function tryServe() {
-        const combo = (gameState.prep.base || "") + (gameState.prep.topping || "") || "NONE";
+        const combo = (gameState.prep.base || "") + (gameState.prep.topping || "");
         const targetIdx = gameState.slots.findIndex(s => s && s.recipe === combo);
-
         if (targetIdx !== -1) {
-            const price = gameState.recipeBook[combo].price;
-            gameState.money += price;
-            gameState.score += 100;
+            const price = gameState.recipeBook[combo];
+            gameState.money += price; gameState.score += 100;
             playSound(600, 0.2);
             showFloatText(`+$${price} ✨`, document.getElementById(`slot-${targetIdx}`), "var(--accent-warm)");
             removeCustomer(targetIdx, true);
-            clearAssembly();
+            gameState.prep = { base: null, topping: null };
+            document.querySelectorAll('.prep-slot').forEach(s => { s.innerHTML = ''; s.classList.remove('filled'); });
             updateHUD();
         } else {
             playSound(200, 0.2);
@@ -460,37 +308,48 @@
         }
     }
 
-    function customerLoop() {
-        if (!gameState.isPlaying) return;
-        spawnCustomer();
-        setTimeout(customerLoop, 5000 + Math.random() * 4000);
+    function spawnCustomer() {
+        const idx = gameState.slots.findIndex(s => s === null);
+        if (idx === -1) return;
+        const recipes = Object.keys(gameState.recipeBook);
+        const recipe = recipes[Math.floor(Math.random() * recipes.length)];
+        const customer = { recipe, patience: 100 };
+        gameState.slots[idx] = customer;
+        const slotEl = document.getElementById(`slot-${idx}`);
+        slotEl.innerHTML = `<div class="order-cloud">${recipe}</div><div class="customer-avatar">👩‍🎓</div><div class="patience-bar"><div class="patience-fill" id="p-fill-${idx}"></div></div>`;
+        slotEl.classList.add('active');
+        customer.interval = setInterval(() => {
+            customer.patience -= 0.4;
+            const fill = document.getElementById(`p-fill-${idx}`);
+            if (fill) fill.style.width = customer.patience + "%";
+            if (customer.patience <= 0) removeCustomer(idx, false);
+        }, 100);
     }
 
+    function removeCustomer(idx, success) {
+        if (!gameState.slots[idx]) return;
+        clearInterval(gameState.slots[idx].interval);
+        const slotEl = document.getElementById(`slot-${idx}`);
+        slotEl.classList.remove('active');
+        setTimeout(() => { slotEl.innerHTML = ''; gameState.slots[idx] = null; }, 600);
+        if (!success) { gameState.money = Math.max(0, gameState.money - 5); updateHUD(); }
+    }
+
+    function customerLoop() { if (gameState.isPlaying) { spawnCustomer(); setTimeout(customerLoop, 6000 + Math.random() * 4000); } }
+
     function spawnCat() {
-        const field = document.getElementById('cat-field');
-        const catEl = document.createElement('div');
-        catEl.className = 'cat-roamer';
-        catEl.innerHTML = catEmojis[Math.floor(Math.random() * catEmojis.length)];
-        catEl.style.left = Math.random() * 80 + 10 + "%";
-        catEl.style.top = Math.random() * 20 + 50 + "%";
-        catEl.onclick = () => {
-            gameState.money += 5;
-            showFloatText("Tip $5 🐾", catEl, "var(--accent-warm)");
-            playSound(800, 0.05);
-            updateHUD();
-        };
-        field.appendChild(catEl);
+        const cat = document.createElement('div');
+        cat.className = 'cat-roamer'; cat.innerHTML = '🐈';
+        cat.style.left = "50%"; cat.style.top = "70%";
+        cat.onclick = () => { gameState.money += 5; updateHUD(); showFloatText("+$5 🐾", cat, "var(--accent-warm)"); playSound(800, 0.05); };
+        document.getElementById('cat-field').appendChild(cat);
         const move = () => {
             if (!gameState.isPlaying) return;
-            const nextX = Math.random() * 80 + 10;
-            const nextY = Math.random() * 20 + 50;
-            catEl.style.left = nextX + "%";
-            catEl.style.top = nextY + "%";
-            const currentX = parseFloat(catEl.style.left);
-            catEl.style.transform = nextX < currentX ? "scaleX(-1)" : "scaleX(1)";
-            setTimeout(move, 4000 + Math.random() * 5000);
+            cat.style.left = (Math.random() * 70 + 15) + "%";
+            cat.style.top = (Math.random() * 20 + 60) + "%";
+            setTimeout(move, 4000 + Math.random() * 3000);
         };
-        setTimeout(move, 100);
+        move();
     }
 
     function updateHUD() {
@@ -501,11 +360,8 @@
     function showFloatText(txt, anchor, color) {
         const rect = anchor.getBoundingClientRect();
         const float = document.createElement('div');
-        float.className = 'floating-text';
-        float.innerText = txt;
-        float.style.color = color;
-        float.style.left = (rect.left + rect.width/2 - 40) + "px";
-        float.style.top = rect.top + "px";
+        float.className = 'floating-text'; float.innerText = txt; float.style.color = color;
+        float.style.left = (rect.left + rect.width/2 - 30) + "px"; float.style.top = rect.top + "px";
         document.body.appendChild(float);
         setTimeout(() => float.remove(), 1000);
     }
@@ -513,24 +369,15 @@
     function initRain() {
         const canvas = document.getElementById('rain-canvas');
         const ctx = canvas.getContext('2d');
-        const resize = () => {
-            canvas.width = canvas.parentElement.offsetWidth;
-            canvas.height = canvas.parentElement.offsetHeight;
-        };
-        resize();
-        window.onresize = resize;
-        const drops = Array(40).fill(0).map(() => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            s: Math.random() * 3 + 4
-        }));
+        const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+        resize(); window.addEventListener('resize', resize);
+        const drops = Array(30).fill(0).map(() => ({ x: Math.random() * 500, y: Math.random() * 500, s: Math.random() * 3 + 4 }));
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.strokeStyle = 'rgba(150, 180, 255, 0.3)';
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(150, 180, 255, 0.3)'; ctx.lineWidth = 1;
             drops.forEach(d => {
                 ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x, d.y+10); ctx.stroke();
-                d.y += d.s; if(d.y > canvas.height) d.y = -10;
+                d.y += d.s; if(d.y > canvas.height) { d.y = -10; d.x = Math.random() * canvas.width; }
             });
             requestAnimationFrame(draw);
         }
