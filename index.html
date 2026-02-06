@@ -194,7 +194,14 @@
         }
 
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        .cat-roamer { position: absolute; font-size: 1.8rem; cursor: pointer; transition: all 4s linear; z-index: 5; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+        .cat-roamer { 
+            position: absolute; 
+            font-size: 1.8rem; 
+            cursor: pointer; 
+            transition: left 4s linear, top 4s linear, transform 0.4s; 
+            z-index: 5; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); 
+        }
         .floating-text { position: absolute; font-weight: bold; font-size: 1rem; pointer-events: none; animation: floatUp 1s forwards; z-index: 100; }
         @keyframes floatUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-60px); opacity: 0; } }
     </style>
@@ -203,7 +210,7 @@
 
 <div id="game-container">
     <div id="hud">
-        <div class="stat">UANG: <span id="money-txt">$0</span></div>
+        <div class="stat">WANG: <span id="money-txt">$0</span></div>
         <div class="stat">SKOR: <span id="score-txt">0</span></div>
     </div>
 
@@ -254,6 +261,9 @@
         slots: [null, null, null],
         recipeBook: { "☕🥛": 30, "☕🍬": 20, "🍵🥛": 25, "🍵🍬": 15 }
     };
+
+    const customerEmojis = ["👩‍🎓", "👨‍🎨", "👨‍🍳", "👩‍💼", "🤵"];
+    const catEmojis = ["🐈‍⬛", "🐈", "🐅", "🤍"];
 
     function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
@@ -313,10 +323,11 @@
         if (idx === -1) return;
         const recipes = Object.keys(gameState.recipeBook);
         const recipe = recipes[Math.floor(Math.random() * recipes.length)];
+        const avatar = customerEmojis[Math.floor(Math.random() * customerEmojis.length)];
         const customer = { recipe, patience: 100 };
         gameState.slots[idx] = customer;
         const slotEl = document.getElementById(`slot-${idx}`);
-        slotEl.innerHTML = `<div class="order-cloud">${recipe}</div><div class="customer-avatar">👩‍🎓</div><div class="patience-bar"><div class="patience-fill" id="p-fill-${idx}"></div></div>`;
+        slotEl.innerHTML = `<div class="order-cloud">${recipe}</div><div class="customer-avatar">${avatar}</div><div class="patience-bar"><div class="patience-fill" id="p-fill-${idx}"></div></div>`;
         slotEl.classList.add('active');
         customer.interval = setInterval(() => {
             customer.patience -= 0.4;
@@ -332,24 +343,43 @@
         const slotEl = document.getElementById(`slot-${idx}`);
         slotEl.classList.remove('active');
         setTimeout(() => { slotEl.innerHTML = ''; gameState.slots[idx] = null; }, 600);
-        if (!success) { gameState.money = Math.max(0, gameState.money - 5); updateHUD(); }
+        if (!success) { 
+            gameState.money = Math.max(0, gameState.money - 5); 
+            showFloatText("Sabar Habis", slotEl, "var(--danger)");
+            updateHUD(); 
+        }
     }
 
     function customerLoop() { if (gameState.isPlaying) { spawnCustomer(); setTimeout(customerLoop, 6000 + Math.random() * 4000); } }
 
     function spawnCat() {
+        const field = document.getElementById('cat-field');
         const cat = document.createElement('div');
-        cat.className = 'cat-roamer'; cat.innerHTML = '🐈';
-        cat.style.left = "50%"; cat.style.top = "70%";
-        cat.onclick = () => { gameState.money += 5; updateHUD(); showFloatText("+$5 🐾", cat, "var(--accent-warm)"); playSound(800, 0.05); };
-        document.getElementById('cat-field').appendChild(cat);
+        cat.className = 'cat-roamer'; 
+        cat.innerHTML = catEmojis[Math.floor(Math.random() * catEmojis.length)];
+        cat.style.left = (Math.random() * 70 + 15) + "%"; 
+        cat.style.top = (Math.random() * 20 + 60) + "%";
+        
+        cat.onclick = () => { 
+            gameState.money += 5; 
+            updateHUD(); 
+            showFloatText("+$5 🐾", cat, "var(--accent-warm)"); 
+            playSound(800, 0.05); 
+        };
+        
+        field.appendChild(cat);
+        
         const move = () => {
             if (!gameState.isPlaying) return;
-            cat.style.left = (Math.random() * 70 + 15) + "%";
-            cat.style.top = (Math.random() * 20 + 60) + "%";
+            const nextX = Math.random() * 70 + 15;
+            const nextY = Math.random() * 20 + 60;
+            const currentX = parseFloat(cat.style.left);
+            cat.style.transform = nextX < currentX ? "scaleX(-1)" : "scaleX(1)";
+            cat.style.left = nextX + "%";
+            cat.style.top = nextY + "%";
             setTimeout(move, 4000 + Math.random() * 3000);
         };
-        move();
+        setTimeout(move, 100);
     }
 
     function updateHUD() {
